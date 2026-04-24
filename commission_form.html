@@ -273,8 +273,8 @@
             font-size: 48px;
             color: #ccc;
             pointer-events: auto;
-            min-height: 300px;
-            max-height: 600px;
+            min-height: 500px;
+            max-height: 700px;
             width: 100%;
         }
         
@@ -589,10 +589,10 @@
                     <div class="content-grid">
                         <div class="main-image-section">
                             <h4>메인 이미지</h4>
-                            <div class="image-box" id="main-image-${char.id}" onclick="adjustMainImage('${char.id}')">
+                            <div class="image-box" id="main-image-${char.id}">
                                 ${char.images.main ? `<img src="${char.images.main}">` : '+'}
                             </div>
-                            <button style="width: 100%; font-size: 11px;" onclick="selectImage('${char.id}', 'main')">이미지 선택</button>
+                            <button style="width: 100%; font-size: 11px;" data-select-image data-char-id="${char.id}" data-image-type="main">이미지 선택</button>
                             <button style="width: 100%; font-size: 10px; margin-top: 4px; background: #f0f0f0;" id="adjust-btn-${char.id}" style="display: none;" onclick="startImageAdjust('${char.id}')">이미지 조정</button>
                             
                             <h4 style="margin-top: 0.75rem;">기타 이미지</h4>
@@ -667,6 +667,15 @@
             document.querySelectorAll('.close-btn[data-char-id]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     removeCharacter(btn.dataset.charId);
+                });
+            });
+
+            // 이미지 선택 버튼 이벤트 추가
+            document.querySelectorAll('[data-select-image]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const charId = e.target.dataset.charId;
+                    const imageType = e.target.dataset.imageType;
+                    selectImage(charId, imageType);
                 });
             });
         }
