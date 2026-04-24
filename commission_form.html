@@ -119,10 +119,10 @@
         
         label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
-            margin-bottom: 4px;
-            font-weight: 500;
+            margin-bottom: 3px;
+            font-weight: 600;
         }
         
         input[type="text"],
@@ -131,13 +131,18 @@
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             font-family: inherit;
         }
         
         textarea {
             resize: vertical;
             min-height: 100px;
+        }
+
+        .characteristic-item input {
+            min-height: 50px;
+            padding: 8px 12px;
         }
         
         input[type="text"]:focus,
@@ -275,9 +280,9 @@
         }
         
         h4 {
-            font-size: 12px;
-            font-weight: 500;
-            color: #666;
+            font-size: 11px;
+            font-weight: 600;
+            color: #555;
             margin-bottom: 0.5rem;
         }
 
@@ -450,26 +455,35 @@
                     <div class="section-divider">
                         <div class="colors-title">색상 (색상 칸을 클릭해서 스포이드 사용)</div>
                         <div class="color-grid">
-                            ${Object.entries(char.colors).map(([key, color]) => `
-                                <div class="color-item">
-                                    <div class="color-box" onclick="selectColorField('${char.id}', '${key}')" style="background: ${color.code};"></div>
-                                    <div class="color-info">
-                                        <label>${color.name}</label>
-                                        <input type="text" value="${color.code}" readonly>
+                            ${['hair', 'eyeL', 'eyeR', 'skin'].map(key => {
+                                const color = char.colors[key];
+                                return `
+                                    <div class="color-item">
+                                        <div class="color-box" onclick="selectColorField('${char.id}', '${key}')" style="background: ${color.code};"></div>
+                                        <div class="color-info">
+                                            <label>${color.name}</label>
+                                            <input type="text" value="${color.code}" readonly>
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>
-                        ${`<div style="margin-top: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                            <div>
-                                <label>기타1 이름</label>
-                                <input type="text" class="color-name-input" value="${char.colors.etc1.name}" onchange="updateColorName('${char.id}', 'etc1', this.value)">
+                        <div style="margin-top: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div class="color-item">
+                                <div class="color-box" onclick="selectColorField('${char.id}', 'etc1')" style="background: ${char.colors.etc1.code};"></div>
+                                <div class="color-info">
+                                    <input type="text" value="${char.colors.etc1.name}" onchange="updateColorName('${char.id}', 'etc1', this.value)" placeholder="기타1" style="margin-bottom: 4px;">
+                                    <input type="text" value="${char.colors.etc1.code}" readonly>
+                                </div>
                             </div>
-                            <div>
-                                <label>기타2 이름</label>
-                                <input type="text" class="color-name-input" value="${char.colors.etc2.name}" onchange="updateColorName('${char.id}', 'etc2', this.value)">
+                            <div class="color-item">
+                                <div class="color-box" onclick="selectColorField('${char.id}', 'etc2')" style="background: ${char.colors.etc2.code};"></div>
+                                <div class="color-info">
+                                    <input type="text" value="${char.colors.etc2.name}" onchange="updateColorName('${char.id}', 'etc2', this.value)" placeholder="기타2" style="margin-bottom: 4px;">
+                                    <input type="text" value="${char.colors.etc2.code}" readonly>
+                                </div>
                             </div>
-                        </div>`}
+                        </div>
                     </div>
                 </div>
             `).join('');
