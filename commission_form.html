@@ -579,6 +579,7 @@
                                         <div class="color-item-compact">
                                             <div class="color-box-compact" data-select-color data-char-id="${char.id}" data-color-key="${key}" style="background: ${color.code};"></div>
                                             <div class="color-label">${labels[idx]}</div>
+                                            <input type="color" value="${color.code}" onchange="updateCharColor('${char.id}', '${key}', this.value)" style="width: 100%; height: 30px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
                                         </div>
                                     `;
                                 }).join('')}
@@ -727,6 +728,7 @@
                 centerMusic: '',
                 centerImage: null,
                 centerKeyword: '',
+                centerNarrative: '',
                 char1: createEmptyCharacter(),
                 char2: createEmptyCharacter()
             });
@@ -812,7 +814,7 @@
                         <div class="grid-2">
                             <div>
                                 <h4>동물</h4>
-                                <div class="image-box image-box-small" onclick="selectCoupleImage('${pairId}', ${charNum}, 'animal')">
+                                <div class="image-box" style="min-height: 250px; max-height: 350px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'animal')">
                                     ${charData.images.animal ? `<img src="${charData.images.animal}">` : '+'}
                                 </div>
                                 <button style="width: 100%; font-size: 9px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'animal')">선택</button>
@@ -820,7 +822,7 @@
                             
                             <div>
                                 <h4>기타1</h4>
-                                <div class="image-box image-box-small" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small1')">
+                                <div class="image-box" style="min-height: 250px; max-height: 350px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small1')">
                                     ${charData.images.small1 ? `<img src="${charData.images.small1}">` : '+'}
                                 </div>
                                 <button style="width: 100%; font-size: 9px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small1')">선택</button>
@@ -828,7 +830,7 @@
                             
                             <div>
                                 <h4>기타2</h4>
-                                <div class="image-box image-box-small" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small2')">
+                                <div class="image-box" style="min-height: 250px; max-height: 350px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small2')">
                                     ${charData.images.small2 ? `<img src="${charData.images.small2}">` : '+'}
                                 </div>
                                 <button style="width: 100%; font-size: 9px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small2')">선택</button>
@@ -889,6 +891,11 @@
                                     <div class="center-label">대표 키워드</div>
                                     <input type="text" class="center-input" value="${pair.centerKeyword}" onchange="updateCoupleCenter('${pair.id}', 'keyword', this.value)" placeholder="커플 키워드">
                                 </div>
+
+                                <div class="center-form-group">
+                                    <div class="center-label">서사</div>
+                                    <textarea class="center-input" style="min-height: 150px;" onchange="updateCoupleCenter('${pair.id}', 'narrative', this.value)" placeholder="이 커플의 전체 서사, 스토리를 작성하세요">${pair.centerNarrative || ''}</textarea>
+                                </div>
                             </div>
 
                             <div class="couple-right">
@@ -905,6 +912,7 @@
             if (pair) {
                 if (field === 'music') pair.centerMusic = value;
                 else if (field === 'keyword') pair.centerKeyword = value;
+                else if (field === 'narrative') pair.centerNarrative = value;
             }
         }
 
@@ -1623,6 +1631,14 @@
                 }
             };
             input.click();
+        }
+
+        function updateCharColor(charId, colorKey, hex) {
+            const char = characters.find(c => c.id === charId);
+            if (char && char.colors[colorKey]) {
+                char.colors[colorKey].code = hex;
+                renderCharacters();
+            }
         }
 
         function selectColorField(charId, colorKey) {
