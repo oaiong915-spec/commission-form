@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -30,17 +30,46 @@
             border-bottom: 1px solid #e0e0e0;
             margin-bottom: 2rem;
             border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .header h1 {
+        .header-left h1 {
             font-size: 24px;
             margin-bottom: 8px;
             font-weight: 500;
         }
         
-        .header p {
+        .header-left p {
             font-size: 14px;
             color: #666;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            font-size: 13px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .mode-btn.active {
+            background: #2ea043;
+            color: white;
+            border-color: #2ea043;
+        }
+
+        .mode-btn:hover {
+            border-color: #999;
         }
         
         .characters-section {
@@ -78,6 +107,24 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        .mode-single {
+            display: none;
+        }
+
+        .mode-couple {
+            display: none;
+        }
+
+        .mode-single.active {
+            display: block;
+        }
+
+        .mode-couple.active {
+            display: block;
+        }
+
+        /* 1인용 레이아웃 */
         
         .character-card {
             background: white;
@@ -147,10 +194,6 @@
             background: #fafafa;
         }
 
-        .keyword-section {
-            margin-bottom: 1.5rem;
-        }
-
         .keyword-and-colors {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -166,23 +209,24 @@
         .colors-box {
             display: flex;
             flex-direction: column;
+            gap: 0.25rem;
         }
 
         .colors-horizontal {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .color-item-compact {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
 
         .color-box-compact {
             width: 100%;
-            height: 40px;
+            height: 35px;
             border-radius: 6px;
             border: 1px solid #ddd;
             cursor: pointer;
@@ -190,20 +234,20 @@
 
         .color-code-input {
             width: 100%;
-            padding: 6px 8px;
+            padding: 4px 6px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 10px;
+            font-size: 9px;
             font-family: monospace;
             text-align: center;
         }
 
         .color-name-input {
             width: 100%;
-            padding: 4px 6px;
+            padding: 2px 4px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 10px;
+            font-size: 9px;
         }
         
         .content-grid {
@@ -261,32 +305,6 @@
             gap: 0.75rem;
             margin-top: 0.75rem;
         }
-        
-        .grid-full {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-        }
-        
-        .download-section {
-            display: flex;
-            gap: 8px;
-            margin-top: 2rem;
-        }
-        
-        .download-section button {
-            flex: 1;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            background: #2ea043;
-            color: white;
-            border: none;
-        }
-        
-        .download-section button:hover {
-            background: #23803a;
-        }
 
         h4 {
             font-size: 11px;
@@ -319,39 +337,183 @@
             padding: 8px 12px;
         }
 
-        .section-divider {
-            border-top: 1px solid #f0f0f0;
-            padding-top: 1rem;
-            margin-top: 1rem;
+        /* 커플용 레이아웃 */
+
+        .couple-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .couple-left {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .couple-center {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .couple-right {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transform: scaleX(-1);
+        }
+
+        .couple-right > * {
+            transform: scaleX(-1);
+        }
+
+        .center-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .center-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .center-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .center-image-box {
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            cursor: pointer;
+            overflow: hidden;
+            font-size: 32px;
+            color: #ccc;
+        }
+
+        .center-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .center-btn {
+            padding: 6px 10px;
+            font-size: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .download-section {
+            display: flex;
+            gap: 8px;
+            margin-top: 2rem;
+        }
+        
+        .download-section button {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            background: #2ea043;
+            color: white;
+            border: none;
+        }
+        
+        .download-section button:hover {
+            background: #23803a;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>캐릭터 커미션 신청서</h1>
-            <p>참고 이미지를 올리고 캐릭터 색감을 정의하세요</p>
-        </div>
-        
-        <div class="characters-section">
-            <div class="section-header">
-                <h2>캐릭터</h2>
-                <button id="addCharBtn">+ 캐릭터 추가</button>
+            <div class="header-left">
+                <h1>캐릭터 커미션 신청서</h1>
+                <p>참고 이미지를 올리고 캐릭터 색감을 정의하세요</p>
             </div>
-            <div id="charactersContainer"></div>
+            <div class="mode-buttons">
+                <button class="mode-btn active" onclick="switchMode('single')">1인용</button>
+                <button class="mode-btn" onclick="switchMode('couple')">커플(2인용)</button>
+            </div>
         </div>
-        
-        <div class="download-section">
-            <button id="downloadImageBtn">📥 이미지로 저장</button>
+
+        <!-- 1인용 모드 -->
+        <div class="mode-single active">
+            <div class="characters-section">
+                <div class="section-header">
+                    <h2>캐릭터</h2>
+                    <button id="addCharBtn">+ 캐릭터 추가</button>
+                </div>
+                <div id="charactersContainer"></div>
+            </div>
+            
+            <div class="download-section">
+                <button id="downloadImageBtn">📥 이미지로 저장</button>
+            </div>
+        </div>
+
+        <!-- 커플용 모드 -->
+        <div class="mode-couple">
+            <div class="characters-section">
+                <div class="section-header">
+                    <h2>커플 커미션</h2>
+                    <button id="addCoupleBtn">+ 커플 추가</button>
+                </div>
+                <div id="couplePairsContainer"></div>
+            </div>
+            
+            <div class="download-section">
+                <button id="downloadCoupleImageBtn">📥 이미지로 저장</button>
+            </div>
         </div>
     </div>
 
     <script>
         let characters = [];
+        let couplePairs = [];
         
         const addCharBtn = document.getElementById('addCharBtn');
         const charactersContainer = document.getElementById('charactersContainer');
         const downloadImageBtn = document.getElementById('downloadImageBtn');
+        const addCoupleBtn = document.getElementById('addCoupleBtn');
+        const couplePairsContainer = document.getElementById('couplePairsContainer');
+        const downloadCoupleImageBtn = document.getElementById('downloadCoupleImageBtn');
+
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.mode-single, .mode-couple').forEach(el => el.classList.remove('active'));
+            
+            if (mode === 'single') {
+                document.querySelector('.mode-single').classList.add('active');
+            } else {
+                document.querySelector('.mode-couple').classList.add('active');
+            }
+        }
+
+        // ===== 1인용 함수들 =====
         
         function addCharacter() {
             const charId = 'char_' + Date.now();
@@ -395,7 +557,7 @@
                         </div>
 
                         <div class="colors-box">
-                            <label style="margin-bottom: 0.5rem;">색상 (클릭해서 스포이드)</label>
+                            <label style="margin-bottom: 0.25rem; font-size: 10px;">색상</label>
                             <div class="colors-horizontal">
                                 ${['hair', 'eyeL', 'eyeR', 'skin', 'etc1', 'etc2'].map(key => {
                                     const color = char.colors[key];
@@ -515,8 +677,235 @@
             characters = characters.filter(c => c.id !== charId);
             renderCharacters();
         }
-        
-        function selectImage(charId, imageType) {
+
+        // ===== 커플용 함수들 =====
+
+        function addCouplePair() {
+            const pairId = 'couple_' + Date.now();
+            couplePairs.push({
+                id: pairId,
+                centerMusic: '',
+                centerImage: null,
+                centerKeyword: '',
+                char1: createEmptyCharacter(),
+                char2: createEmptyCharacter()
+            });
+            renderCouplePairs();
+        }
+
+        function createEmptyCharacter() {
+            return {
+                keyword: '',
+                characteristics: ['', '', '', '', ''],
+                images: {
+                    animal: null,
+                    main: null,
+                    small1: null,
+                    small2: null,
+                    other1: null,
+                    other2: null
+                },
+                additionalInfo: ['', ''],
+                colors: {
+                    hair: { code: '#000000', name: '머리색' },
+                    eyeL: { code: '#8B6914', name: '눈색 (왼)' },
+                    eyeR: { code: '#8B6914', name: '눈색 (오른)' },
+                    skin: { code: '#F5DEB3', name: '피부색' },
+                    etc1: { code: '#808080', name: '기타1' },
+                    etc2: { code: '#808080', name: '기타2' }
+                }
+            };
+        }
+
+        function renderCouplePairs() {
+            couplePairsContainer.innerHTML = couplePairs.map((pair, idx) => {
+                const renderCoupleChar = (charNum, charData, pairId) => `
+                    <div class="keyword-and-colors">
+                        <div class="keyword-box">
+                            <label>키워드</label>
+                            <input type="text" value="${charData.keyword}" onchange="updateCoupleCharKeyword('${pairId}', ${charNum}, this.value)" placeholder="키워드">
+                        </div>
+
+                        <div class="colors-box">
+                            <label style="margin-bottom: 0.5rem;">색상</label>
+                            <div class="colors-horizontal">
+                                ${['hair', 'eyeL', 'eyeR', 'skin', 'etc1', 'etc2'].map(key => {
+                                    const color = charData.colors[key];
+                                    const isEtc = key === 'etc1' || key === 'etc2';
+                                    return `
+                                        <div class="color-item-compact">
+                                            <div class="color-box-compact" onclick="selectCoupleColorField('${pairId}', ${charNum}, '${key}')" style="background: ${color.code};"></div>
+                                            ${isEtc ? `<input type="text" class="color-name-input" value="${color.name}" onchange="updateCoupleColorName('${pairId}', ${charNum}, '${key}', this.value)">` : `<label style="text-align: center; margin-bottom: 0;">${color.name}</label>`}
+                                            <input type="text" class="color-code-input" value="${color.code}" readonly>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-grid">
+                        <div class="main-image-section">
+                            <h4>메인</h4>
+                            <div class="image-box" onclick="selectCoupleImage('${pairId}', ${charNum}, 'main')">
+                                ${charData.images.main ? `<img src="${charData.images.main}">` : '+'}
+                            </div>
+                            <button style="width: 100%; font-size: 10px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'main')">선택</button>
+                            
+                            <h4 style="margin-top: 0.75rem;">기타</h4>
+                            <div class="other-images-section">
+                                <div>
+                                    <div class="image-box image-box-half" onclick="selectCoupleImage('${pairId}', ${charNum}, 'other1')">
+                                        ${charData.images.other1 ? `<img src="${charData.images.other1}">` : '+'}
+                                    </div>
+                                    <button style="width: 100%; font-size: 9px; margin-top: 4px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'other1')">선택</button>
+                                </div>
+                                <div>
+                                    <div class="image-box image-box-half" onclick="selectCoupleImage('${pairId}', ${charNum}, 'other2')">
+                                        ${charData.images.other2 ? `<img src="${charData.images.other2}">` : '+'}
+                                    </div>
+                                    <button style="width: 100%; font-size: 9px; margin-top: 4px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'other2')">선택</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div>
+                                <h4>동물</h4>
+                                <div class="image-box image-box-small" onclick="selectCoupleImage('${pairId}', ${charNum}, 'animal')">
+                                    ${charData.images.animal ? `<img src="${charData.images.animal}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 9px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'animal')">선택</button>
+                            </div>
+                            
+                            <div>
+                                <h4>기타1</h4>
+                                <div class="image-box image-box-small" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small1')">
+                                    ${charData.images.small1 ? `<img src="${charData.images.small1}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 9px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small1')">선택</button>
+                            </div>
+                            
+                            <div>
+                                <h4>기타2</h4>
+                                <div class="image-box image-box-small" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small2')">
+                                    ${charData.images.small2 ? `<img src="${charData.images.small2}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 9px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'small2')">선택</button>
+                            </div>
+                            
+                            <div style="grid-column: 1/3;">
+                                <h4>특징</h4>
+                                <div class="characteristics-grid">
+                                    ${charData.characteristics.map((val, i) => `
+                                        <div class="characteristic-item">
+                                            <label>특징 ${i + 1}</label>
+                                            <input type="text" value="${val}" onchange="updateCoupleCharacteristic('${pairId}', ${charNum}, ${i}, this.value)" style="font-size: 10px;" placeholder="예: 쾌활함">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <div style="grid-column: 1/3;">
+                                <h4>추가정보</h4>
+                                ${charData.additionalInfo.map((val, i) => `
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <label>추가정보 ${i + 1}</label>
+                                        <textarea onchange="updateCoupleAdditionalInfo('${pairId}', ${charNum}, ${i}, this.value)" style="font-size: 10px; min-height: 80px;" placeholder="추가 정보">${val}</textarea>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                return `
+                    <div style="margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 14px; color: #666; font-weight: 500;">커플 ${idx + 1}</h3>
+                            <button class="close-btn" onclick="removeCouplePair('${pair.id}')">×</button>
+                        </div>
+
+                        <div class="couple-layout" id="couple-${pair.id}">
+                            <div class="couple-left">
+                                ${renderCoupleChar(1, pair.char1, pair.id)}
+                            </div>
+
+                            <div class="couple-center">
+                                <div class="center-form-group">
+                                    <div class="center-label">대표 음악</div>
+                                    <input type="text" class="center-input" value="${pair.centerMusic}" onchange="updateCoupleCenter('${pair.id}', 'music', this.value)" placeholder="음악명 또는 URL">
+                                </div>
+
+                                <div class="center-form-group">
+                                    <div class="center-label">대표 이미지</div>
+                                    <div class="center-image-box" onclick="selectCoupleCenterImage('${pair.id}')">
+                                        ${pair.centerImage ? `<img src="${pair.centerImage}">` : '+'}
+                                    </div>
+                                    <button class="center-btn" style="width: 100%;" onclick="selectCoupleCenterImage('${pair.id}')">선택</button>
+                                </div>
+
+                                <div class="center-form-group">
+                                    <div class="center-label">대표 키워드</div>
+                                    <input type="text" class="center-input" value="${pair.centerKeyword}" onchange="updateCoupleCenter('${pair.id}', 'keyword', this.value)" placeholder="커플 키워드">
+                                </div>
+                            </div>
+
+                            <div class="couple-right">
+                                ${renderCoupleChar(2, pair.char2, pair.id)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateCoupleCenter(pairId, field, value) {
+            const pair = couplePairs.find(p => p.id === pairId);
+            if (pair) {
+                if (field === 'music') pair.centerMusic = value;
+                else if (field === 'keyword') pair.centerKeyword = value;
+            }
+        }
+
+        function updateCoupleCharKeyword(pairId, charNum, value) {
+            const pair = couplePairs.find(p => p.id === pairId);
+            if (pair) {
+                if (charNum === 1) pair.char1.keyword = value;
+                else pair.char2.keyword = value;
+            }
+        }
+
+        function updateCoupleCharacteristic(pairId, charNum, idx, value) {
+            const pair = couplePairs.find(p => p.id === pairId);
+            if (pair) {
+                if (charNum === 1) pair.char1.characteristics[idx] = value;
+                else pair.char2.characteristics[idx] = value;
+            }
+        }
+
+        function updateCoupleAdditionalInfo(pairId, charNum, idx, value) {
+            const pair = couplePairs.find(p => p.id === pairId);
+            if (pair) {
+                if (charNum === 1) pair.char1.additionalInfo[idx] = value;
+                else pair.char2.additionalInfo[idx] = value;
+            }
+        }
+
+        function updateCoupleColorName(pairId, charNum, colorKey, value) {
+            const pair = couplePairs.find(p => p.id === pairId);
+            if (pair) {
+                const char = charNum === 1 ? pair.char1 : pair.char2;
+                if (char.colors[colorKey]) char.colors[colorKey].name = value;
+            }
+        }
+
+        function removeCouplePair(pairId) {
+            couplePairs = couplePairs.filter(p => p.id !== pairId);
+            renderCouplePairs();
+        }
+
+        function selectCoupleImage(pairId, charNum, imageType) {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
@@ -525,10 +914,11 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        const char = characters.find(c => c.id === charId);
-                        if (char) {
+                        const pair = couplePairs.find(p => p.id === pairId);
+                        if (pair) {
+                            const char = charNum === 1 ? pair.char1 : pair.char2;
                             char.images[imageType] = event.target.result;
-                            renderCharacters();
+                            renderCouplePairs();
                         }
                     };
                     reader.readAsDataURL(file);
@@ -536,7 +926,28 @@
             };
             input.click();
         }
-        
+
+        function selectCoupleCenterImage(pairId) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const pair = couplePairs.find(p => p.id === pairId);
+                        if (pair) {
+                            pair.centerImage = event.target.result;
+                            renderCouplePairs();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
         function selectColorField(charId, colorKey) {
             let colorPickerImage = null;
             for (let char of characters) {
@@ -571,6 +982,32 @@
                 return;
             }
             
+            showColorPicker(charId, colorKey, colorPickerImage, false);
+        }
+
+        function selectCoupleColorField(pairId, charNum, colorKey) {
+            const pair = couplePairs.find(p => p.id === pairId);
+            if (!pair) return;
+            
+            const char = charNum === 1 ? pair.char1 : pair.char2;
+            let colorPickerImage = null;
+            
+            for (const imgKey in char.images) {
+                if (char.images[imgKey]) {
+                    colorPickerImage = char.images[imgKey];
+                    break;
+                }
+            }
+            
+            if (!colorPickerImage) {
+                alert('먼저 이미지를 업로드하세요');
+                return;
+            }
+            
+            showColorPickerCouple(pairId, charNum, colorKey, colorPickerImage);
+        }
+
+        function showColorPicker(charId, colorKey, colorPickerImage, isCouple) {
             const canvas = document.createElement('canvas');
             const img = new Image();
             img.onload = () => {
@@ -617,7 +1054,58 @@
             };
             img.src = colorPickerImage;
         }
-        
+
+        function showColorPickerCouple(pairId, charNum, colorKey, colorPickerImage) {
+            const canvas = document.createElement('canvas');
+            const img = new Image();
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; cursor: crosshair;';
+                
+                const container = document.createElement('div');
+                container.style.cssText = 'position: relative; max-width: 80%; max-height: 80%;';
+                
+                const imgElement = document.createElement('img');
+                imgElement.src = colorPickerImage;
+                imgElement.style.cssText = 'max-width: 100%; max-height: 100%; display: block;';
+                
+                container.appendChild(imgElement);
+                overlay.appendChild(container);
+                document.body.appendChild(overlay);
+                
+                imgElement.addEventListener('click', (e) => {
+                    const rect = imgElement.getBoundingClientRect();
+                    const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width));
+                    const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height));
+                    
+                    const imageData = ctx.getImageData(x, y, 1, 1);
+                    const [r, g, b] = imageData.data;
+                    const hex = '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+                    
+                    const pair = couplePairs.find(p => p.id === pairId);
+                    if (pair) {
+                        const char = charNum === 1 ? pair.char1 : pair.char2;
+                        char.colors[colorKey].code = hex;
+                    }
+                    
+                    document.body.removeChild(overlay);
+                    renderCouplePairs();
+                });
+                
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        document.body.removeChild(overlay);
+                    }
+                });
+            };
+            img.src = colorPickerImage;
+        }
+
         downloadImageBtn.addEventListener('click', async () => {
             if (characters.length === 0) {
                 alert('최소 1개 이상의 캐릭터를 추가하세요');
@@ -657,8 +1145,49 @@
                 downloadImageBtn.textContent = '📥 이미지로 저장';
             }
         });
+
+        downloadCoupleImageBtn.addEventListener('click', async () => {
+            if (couplePairs.length === 0) {
+                alert('최소 1개 이상의 커플을 추가하세요');
+                return;
+            }
+            
+            downloadCoupleImageBtn.disabled = true;
+            downloadCoupleImageBtn.textContent = '저장 중...';
+            
+            try {
+                for (let idx = 0; idx < couplePairs.length; idx++) {
+                    const pair = couplePairs[idx];
+                    const element = document.getElementById(`couple-${pair.id}`);
+                    
+                    const canvas = await html2canvas(element, {
+                        backgroundColor: '#ffffff',
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false
+                    });
+                    
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/png');
+                    link.download = (pair.centerKeyword || '커플_' + (idx + 1)) + '.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            } catch (e) {
+                console.error('저장 오류:', e);
+                alert('저장 중 오류가 발생했습니다.');
+            } finally {
+                downloadCoupleImageBtn.disabled = false;
+                downloadCoupleImageBtn.textContent = '📥 이미지로 저장';
+            }
+        });
         
         addCharBtn.addEventListener('click', addCharacter);
+        addCoupleBtn.addEventListener('click', addCouplePair);
         
         addCharacter();
     </script>
