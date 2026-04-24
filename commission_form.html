@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐릭터 커미션 신청서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            background: white;
+            padding: 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .characters-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .section-header h2 {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        button {
+            padding: 8px 16px;
+            font-size: 13px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background: #f9f9f9;
+            border-color: #999;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .character-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .character-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .character-header h3 {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .close-btn {
+            border: none;
+            background: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #999;
+            background: #fafafa;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .image-box {
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            aspect-ratio: 3/4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            cursor: pointer;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            font-size: 48px;
+            color: #ccc;
+        }
+        
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-box-small {
+            aspect-ratio: 1;
+            font-size: 24px;
+        }
+        
+        .image-box-wide {
+            aspect-ratio: 16/9;
+            font-size: 48px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .color-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .color-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .color-info {
+            flex: 1;
+        }
+        
+        .color-info label {
+            margin-bottom: 2px;
+        }
+        
+        .color-info input {
+            width: 100%;
+            padding: 4px 8px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+        
+        .download-section {
+            display: flex;
+            gap: 8px;
+            margin-top: 2rem;
+        }
+        
+        .download-section button {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .section-divider {
+            border-top: 1px solid #f0f0f0;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .characteristics-title,
+        .colors-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 0.75rem;
+        }
+        
+        h4 {
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>캐릭터 커미션 신청서</h1>
+            <p>참고 이미지를 올리고 캐릭터 색감을 정의하세요</p>
+        </div>
+        
+        <div class="characters-section">
+            <div class="section-header">
+                <h2>캐릭터</h2>
+                <button id="addCharBtn">+ 캐릭터 추가</button>
+            </div>
+            <div id="charactersContainer"></div>
+        </div>
+        
+        <div class="download-section">
+            <button id="downloadBtn">📥 다운로드 (TXT)</button>
+            <button id="downloadJsonBtn">📥 다운로드 (JSON)</button>
+        </div>
+    </div>
+
+    <script>
+        let characters = [];
+        
+        const addCharBtn = document.getElementById('addCharBtn');
+        const charactersContainer = document.getElementById('charactersContainer');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+        
+        function addCharacter() {
+            const charId = 'char_' + Date.now();
+            characters.push({
+                id: charId,
+                name: '',
+                characteristics: ['', '', '', '', ''],
+                images: {
+                    animal: null,
+                    main: null,
+                    small1: null,
+                    small2: null,
+                    other: null
+                },
+                additionalInfo: ['', ''],
+                colors: {
+                    hair: { code: '#000000', name: '머리색' },
+                    eyeL: { code: '#8B6914', name: '눈색 (왼)' },
+                    eyeR: { code: '#8B6914', name: '눈색 (오른)' },
+                    skin: { code: '#F5DEB3', name: '피부색' },
+                    etc1: { code: '#808080', name: '기타1' },
+                    etc2: { code: '#808080', name: '기타2' }
+                }
+            });
+            renderCharacters();
+        }
+        
+        function renderCharacters() {
+            charactersContainer.innerHTML = characters.map((char, idx) => `
+                <div class="character-card">
+                    <div class="character-header">
+                        <h3>캐릭터 ${idx + 1}</h3>
+                        <button class="close-btn" onclick="removeCharacter('${char.id}')">×</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>캐릭터 이름</label>
+                        <input type="text" value="${char.name}" onchange="updateCharName('${char.id}', this.value)" placeholder="캐릭터 이름을 입력하세요">
+                    </div>
+                    
+                    <div class="content-grid">
+                        <div>
+                            <h4>메인 이미지</h4>
+                            <div class="image-box" onclick="selectImage('${char.id}', 'main')">
+                                ${char.images.main ? `<img src="${char.images.main}">` : '+'}
+                            </div>
+                            <button style="width: 100%;" onclick="selectImage('${char.id}', 'main')">이미지 선택</button>
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div>
+                                <h4>동물화</h4>
+                                <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'animal')">
+                                    ${char.images.animal ? `<img src="${char.images.animal}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'animal')">선택</button>
+                            </div>
+                            
+                            <div>
+                                <h4>작은거1</h4>
+                                <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'small1')">
+                                    ${char.images.small1 ? `<img src="${char.images.small1}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'small1')">선택</button>
+                            </div>
+                            
+                            <div>
+                                <h4>작은거2</h4>
+                                <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'small2')">
+                                    ${char.images.small2 ? `<img src="${char.images.small2}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'small2')">선택</button>
+                            </div>
+                            
+                            ${char.characteristics.map((val, i) => `
+                                <div ${i === 0 ? 'style="grid-column: 1/3;"' : ''}>
+                                    <label>특징 ${i + 1}</label>
+                                    <input type="text" value="${val}" onchange="updateCharacteristic('${char.id}', ${i}, this.value)" placeholder="예: 쾌활함">
+                                </div>
+                            `).join('')}
+                            
+                            ${char.additionalInfo.map((val, i) => `
+                                <div style="grid-column: 1/3;">
+                                    <label>추가정보 ${i + 1}</label>
+                                    <textarea onchange="updateAdditionalInfo('${char.id}', ${i}, this.value)" placeholder="추가 정보를 입력하세요">${val}</textarea>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h4>기타 이미지</h4>
+                        <div class="image-box image-box-wide" onclick="selectImage('${char.id}', 'other')">
+                            ${char.images.other ? `<img src="${char.images.other}">` : '+'}
+                        </div>
+                        <button style="width: 100%;" onclick="selectImage('${char.id}', 'other')">이미지 선택</button>
+                    </div>
+                    
+                    <div class="section-divider">
+                        <div class="colors-title">색상 (색상 칸을 클릭해서 스포이드 사용)</div>
+                        <div class="color-grid">
+                            ${Object.entries(char.colors).map(([key, color]) => `
+                                <div class="color-item">
+                                    <div class="color-box" onclick="selectColorField('${char.id}', '${key}')" style="background: ${color.code};"></div>
+                                    <div class="color-info">
+                                        <label>${color.name}</label>
+                                        <input type="text" value="${color.code}" readonly>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateCharName(charId, value) {
+            const char = characters.find(c => c.id === charId);
+            if (char) char.name = value;
+        }
+        
+        function updateCharacteristic(charId, idx, value) {
+            const char = characters.find(c => c.id === charId);
+            if (char) char.characteristics[idx] = value;
+        }
+        
+        function updateAdditionalInfo(charId, idx, value) {
+            const char = characters.find(c => c.id === charId);
+            if (char) char.additionalInfo[idx] = value;
+        }
+        
+        function removeCharacter(charId) {
+            characters = characters.filter(c => c.id !== charId);
+            renderCharacters();
+        }
+        
+        function selectImage(charId, imageType) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const char = characters.find(c => c.id === charId);
+                        if (char) {
+                            char.images[imageType] = event.target.result;
+                            renderCharacters();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+        
+        function selectColorField(charId, colorKey) {
+            let colorPickerImage = null;
+            for (let char of characters) {
+                if (char.images.animal) {
+                    colorPickerImage = char.images.animal;
+                    break;
+                }
+                if (char.images.main) {
+                    colorPickerImage = char.images.main;
+                    break;
+                }
+                if (char.images.small1) {
+                    colorPickerImage = char.images.small1;
+                    break;
+                }
+                if (char.images.small2) {
+                    colorPickerImage = char.images.small2;
+                    break;
+                }
+                if (char.images.other) {
+                    colorPickerImage = char.images.other;
+                    break;
+                }
+            }
+            
+            if (!colorPickerImage) {
+                alert('먼저 이미지를 업로드하세요');
+                return;
+            }
+            
+            const canvas = document.createElement('canvas');
+            const img = new Image();
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; cursor: crosshair;';
+                
+                const container = document.createElement('div');
+                container.style.cssText = 'position: relative; max-width: 80%; max-height: 80%;';
+                
+                const imgElement = document.createElement('img');
+                imgElement.src = colorPickerImage;
+                imgElement.style.cssText = 'max-width: 100%; max-height: 100%; display: block;';
+                
+                container.appendChild(imgElement);
+                overlay.appendChild(container);
+                document.body.appendChild(overlay);
+                
+                imgElement.addEventListener('click', (e) => {
+                    const rect = imgElement.getBoundingClientRect();
+                    const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width));
+                    const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height));
+                    
+                    const imageData = ctx.getImageData(x, y, 1, 1);
+                    const [r, g, b] = imageData.data;
+                    const hex = '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+                    
+                    const char = characters.find(c => c.id === charId);
+                    if (char) char.colors[colorKey].code = hex;
+                    
+                    document.body.removeChild(overlay);
+                    renderCharacters();
+                });
+                
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        document.body.removeChild(overlay);
+                    }
+                });
+            };
+            img.src = colorPickerImage;
+        }
+        
+        downloadBtn.addEventListener('click', () => {
+            if (characters.length === 0) {
+                alert('최소 1개 이상의 캐릭터를 추가하세요');
+                return;
+            }
+            
+            let text = '=== 캐릭터 커미션 신청서 ===\n\n';
+            
+            characters.forEach((char, idx) => {
+                text += `【캐릭터 ${idx + 1}】\n`;
+                text += `이름: ${char.name || '(입력 필요)'}\n\n`;
+                
+                text += `【특징】\n`;
+                char.characteristics.forEach((c, i) => {
+                    text += `${i + 1}. ${c || '(입력 필요)'}\n`;
+                });
+                text += '\n';
+                
+                text += `【색상】\n`;
+                Object.entries(char.colors).forEach(([key, color]) => {
+                    text += `${color.name}: ${color.code}\n`;
+                });
+                text += '\n';
+                
+                char.additionalInfo.forEach((info, i) => {
+                    if (info) {
+                        text += `【추가정보 ${i + 1}】\n`;
+                        text += `${info}\n\n`;
+                    }
+                });
+                
+                text += '---\n\n';
+            });
+            
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '커미션신청서.txt';
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+        
+        downloadJsonBtn.addEventListener('click', () => {
+            if (characters.length === 0) {
+                alert('최소 1개 이상의 캐릭터를 추가하세요');
+                return;
+            }
+            
+            const dataToSave = characters.map(char => ({
+                name: char.name,
+                characteristics: char.characteristics,
+                additionalInfo: char.additionalInfo,
+                colors: char.colors
+            }));
+            
+            const json = JSON.stringify(dataToSave, null, 2);
+            const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '커미션신청서.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+        
+        addCharBtn.addEventListener('click', addCharacter);
+        
+        addCharacter();
+    </script>
+</body>
+</html>
