@@ -264,7 +264,6 @@
         .image-box {
             border: 2px dashed #ddd;
             border-radius: 6px;
-            aspect-ratio: 3/4;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -274,6 +273,15 @@
             font-size: 48px;
             color: #ccc;
             pointer-events: auto;
+            min-height: 300px;
+            max-height: 600px;
+            width: 100%;
+        }
+        
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .image-box img {
@@ -283,12 +291,14 @@
         }
 
         .image-box-small {
-            aspect-ratio: 1;
+            min-height: 200px;
+            max-height: 300px;
             font-size: 24px;
         }
 
         .image-box-half {
-            aspect-ratio: 2/1;
+            min-height: 150px;
+            max-height: 250px;
             font-size: 24px;
         }
         
@@ -579,10 +589,11 @@
                     <div class="content-grid">
                         <div class="main-image-section">
                             <h4>메인 이미지</h4>
-                            <div class="image-box" onclick="selectImage('${char.id}', 'main')">
+                            <div class="image-box" id="main-image-${char.id}" onclick="adjustMainImage('${char.id}')">
                                 ${char.images.main ? `<img src="${char.images.main}">` : '+'}
                             </div>
                             <button style="width: 100%; font-size: 11px;" onclick="selectImage('${char.id}', 'main')">이미지 선택</button>
+                            <button style="width: 100%; font-size: 10px; margin-top: 4px; background: #f0f0f0;" id="adjust-btn-${char.id}" style="display: none;" onclick="startImageAdjust('${char.id}')">이미지 조정</button>
                             
                             <h4 style="margin-top: 0.75rem;">기타 이미지</h4>
                             <div class="other-images-section">
@@ -926,12 +937,132 @@
                         if (char) {
                             char.images[imageType] = event.target.result;
                             renderCharacters();
+                            // 메인 이미지 선택 후 조정 버튼 표시
+                            if (imageType === 'main') {
+                                setTimeout(() => {
+                                    const btn = document.getElementById(`adjust-btn-${charId}`);
+                                    if (btn) btn.style.display = 'block';
+                                }, 100);
+                            }
                         }
                     };
                     reader.readAsDataURL(file);
                 }
             };
             input.click();
+        }
+
+        function startImageAdjust(charId) {
+            const char = characters.find(c => c.id === charId);
+            if (!char || !char.images.main) return;
+
+            const imageBox = document.getElementById(`main-image-${charId}`);
+            const img = imageBox.querySelector('img');
+            if (!img) return;
+
+            const rect = imageBox.getBoundingClientRect();
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+
+            const container = document.createElement('div');
+            container.style.cssText = `
+                position: relative;
+                width: 80%;
+                max-width: 600px;
+                border: 3px solid white;
+                overflow: hidden;
+                background: white;
+            `;
+
+            const adjustImg = document.createElement('img');
+            adjustImg.src = char.images.main;
+            adjustImg.style.cssText = `
+                width: 100%;
+                height: auto;
+                display: block;
+                cursor: move;
+            `;
+
+            const crosshair = document.createElement('div');
+            crosshair.style.cssText = `
+                position: absolute;
+                width: 2px;
+                height: 100%;
+                background: rgba(255,0,0,0.5);
+                left: 50%;
+                top: 0;
+                pointer-events: none;
+            `;
+
+            const crosshairH = document.createElement('div');
+            crosshairH.style.cssText = `
+                position: absolute;
+                height: 2px;
+                width: 100%;
+                background: rgba(255,0,0,0.5);
+                top: 50%;
+                left: 0;
+                pointer-events: none;
+            `;
+
+            container.appendChild(adjustImg);
+            container.appendChild(crosshair);
+            container.appendChild(crosshairH);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+
+            let offsetX = 0, offsetY = 0;
+
+            adjustImg.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                crosshair.style.left = x + '%';
+                crosshairH.style.top = y + '%';
+            });
+
+            adjustImg.addEventListener('click', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                
+                // 선택한 영역을 기반으로 이미지 위치 조정
+                const imgRect = adjustImg.getBoundingClientRect();
+                const cropX = x * imgRect.width - rect.width / 2;
+                const cropY = y * imgRect.height - rect.height / 2;
+                
+                img.style.objectPosition = `${x * 100}% ${y * 100}%`;
+                char.imagePosition = { x: x * 100, y: y * 100 };
+                
+                document.body.removeChild(overlay);
+            });
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '닫기';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding: 8px 16px;
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                cursor: pointer;
+                z-index: 1001;
+            `;
+            closeBtn.onclick = () => document.body.removeChild(overlay);
+            overlay.appendChild(closeBtn);
         }
 
         function selectCoupleImage(pairId, charNum, imageType) {
