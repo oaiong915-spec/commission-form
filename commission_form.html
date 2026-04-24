@@ -550,7 +550,7 @@
                 <div class="character-card" id="char-${char.id}">
                     <div class="character-header">
                         <h3>캐릭터 ${idx + 1}</h3>
-                        <button class="close-btn" onclick="removeCharacter('${char.id}')">×</button>
+                        <button class="close-btn" data-char-id="${char.id}">×</button>
                     </div>
                     
                     <div class="keyword-and-colors">
@@ -651,6 +651,13 @@
                     </div>
                 </div>
             `).join('');
+            
+            // 클로즈 버튼 이벤트 추가
+            document.querySelectorAll('.close-btn[data-char-id]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    removeCharacter(btn.dataset.charId);
+                });
+            });
         }
         
         function updateCharKeyword(charId, value) {
@@ -840,7 +847,7 @@
 
                                 <div class="center-form-group">
                                     <div class="center-label">대표 이미지</div>
-                                    <div class="center-image-box" onclick="selectCoupleCenterImage('${pair.id}')">
+                                    <div class="center-image-box" style="aspect-ratio: 1; height: 300px; font-size: 60px;" onclick="selectCoupleCenterImage('${pair.id}')">
                                         ${pair.centerImage ? `<img src="${pair.centerImage}">` : '+'}
                                     </div>
                                     <button class="center-btn" style="width: 100%;" onclick="selectCoupleCenterImage('${pair.id}')">선택</button>
