@@ -587,81 +587,85 @@
                         </div>
                     </div>
 
-                    <div class="content-grid">
-                        <div class="main-image-section">
+                    <!-- 메인 + 동물/기타1/기타2 가로 배치 -->
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="grid-row: span 2;">
                             <h4>메인 이미지</h4>
                             <div class="image-box" id="main-image-${char.id}">
                                 ${char.images.main ? `<img src="${char.images.main}" style="object-fit: cover; object-position: ${char.imagePosition ? char.imagePosition.x + '% ' + char.imagePosition.y + '%' : '50% 50%'}">` : '+'}
                             </div>
                             <button style="width: 100%; font-size: 11px;" data-select-image data-char-id="${char.id}" data-image-type="main">이미지 선택</button>
                             <button style="width: 100%; font-size: 10px; margin-top: 4px; background: #f0f0f0;" id="adjust-btn-${char.id}" style="display: none;" onclick="startImageAdjust('${char.id}')">이미지 조정</button>
-                            
-                            <h4 style="margin-top: 0.75rem;">기타 이미지</h4>
-                            <div class="other-images-section">
-                                <div>
-                                    <div class="image-box image-box-half" id="other1-image-${char.id}">
-                                        ${char.images.other1 ? `<img src="${char.images.other1}" style="object-fit: cover; object-position: ${char.other1Position ? char.other1Position.x + '% ' + char.other1Position.y + '%' : '50% 50%'}">` : '+'}
-                                    </div>
-                                    <button style="width: 100%; font-size: 10px; margin-top: 4px;" data-select-image data-char-id="${char.id}" data-image-type="other1">선택</button>
-                                    <button style="width: 100%; font-size: 9px; margin-top: 2px; background: #f0f0f0;" data-adjust-image="${char.id}-other1" onclick="startImageAdjustOther('${char.id}', 'other1')">조정</button>
-                                </div>
-                                <div>
-                                    <div class="image-box image-box-half" id="other2-image-${char.id}">
-                                        ${char.images.other2 ? `<img src="${char.images.other2}" style="object-fit: cover; object-position: ${char.other2Position ? char.other2Position.x + '% ' + char.other2Position.y + '%' : '50% 50%'}">` : '+'}
-                                    </div>
-                                    <button style="width: 100%; font-size: 10px; margin-top: 4px;" data-select-image data-char-id="${char.id}" data-image-type="other2">선택</button>
-                                    <button style="width: 100%; font-size: 9px; margin-top: 2px; background: #f0f0f0;" data-adjust-image="${char.id}-other2" onclick="startImageAdjustOther('${char.id}', 'other2')">조정</button>
-                                </div>
-                            </div>
                         </div>
-                        
-                        <div class="grid-2">
-                            <div>
-                                <h4>동물화</h4>
-                                <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'animal')">
-                                    ${char.images.animal ? `<img src="${char.images.animal}">` : '+'}
-                                </div>
-                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'animal')">선택</button>
+
+                        <div>
+                            <h4 style="margin-bottom: 0.3rem;">동물</h4>
+                            <div class="image-box" style="min-height: 140px; max-height: 180px;" onclick="selectImage('${char.id}', 'animal')">
+                                ${char.images.animal ? `<img src="${char.images.animal}">` : '+'}
                             </div>
-                            
-                            <div>
-                                <h4>기타1</h4>
-                                <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'small1')">
-                                    ${char.images.small1 ? `<img src="${char.images.small1}">` : '+'}
-                                </div>
-                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'small1')">선택</button>
+                            <button style="width: 100%; font-size: 9px; margin-top: 2px;" data-select-image data-char-id="${char.id}" data-image-type="animal">선택</button>
+                        </div>
+
+                        <div>
+                            <h4 style="margin-bottom: 0.3rem;">기타1</h4>
+                            <div class="image-box" style="min-height: 140px; max-height: 180px;" onclick="selectImage('${char.id}', 'small1')">
+                                ${char.images.small1 ? `<img src="${char.images.small1}">` : '+'}
                             </div>
-                            
-                            <div>
-                                <h4>기타2</h4>
-                                <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'small2')">
-                                    ${char.images.small2 ? `<img src="${char.images.small2}">` : '+'}
-                                </div>
-                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'small2')">선택</button>
+                            <button style="width: 100%; font-size: 9px; margin-top: 2px;" data-select-image data-char-id="${char.id}" data-image-type="small1">선택</button>
+                        </div>
+
+                        <div>
+                            <h4 style="margin-bottom: 0.3rem;">기타2</h4>
+                            <div class="image-box" style="min-height: 140px; max-height: 180px;" onclick="selectImage('${char.id}', 'small2')">
+                                ${char.images.small2 ? `<img src="${char.images.small2}">` : '+'}
                             </div>
-                            
-                            <div style="grid-column: 1/3;">
-                                <h4>특징</h4>
-                                <div class="characteristics-grid">
-                                    ${char.characteristics.map((val, i) => `
-                                        <div class="characteristic-item">
-                                            <label>특징 ${i + 1}</label>
-                                            <input type="text" value="${val}" onchange="updateCharacteristic('${char.id}', ${i}, this.value)" placeholder="예: 쾌활함">
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            
-                            <div style="grid-column: 1/3;">
-                                <h4>추가정보</h4>
-                                ${char.additionalInfo.map((val, i) => `
-                                    <div style="margin-bottom: 0.75rem;">
-                                        <label>추가정보 ${i + 1}</label>
-                                        <textarea onchange="updateAdditionalInfo('${char.id}', ${i}, this.value)" placeholder="추가 정보를 입력하세요">${val}</textarea>
+                            <button style="width: 100%; font-size: 9px; margin-top: 2px;" data-select-image data-char-id="${char.id}" data-image-type="small2">선택</button>
+                        </div>
+
+                        <!-- 특징 목록 -->
+                        <div style="grid-column: 2/5;">
+                            <h4 style="margin-bottom: 0.5rem;">특징</h4>
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 0.4rem;">
+                                ${char.characteristics.map((val, i) => `
+                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <span style="font-size: 11px; color: #666; min-width: 15px;">${i + 1}</span>
+                                        <input type="text" value="${val}" onchange="updateCharacteristic('${char.id}', ${i}, this.value)" placeholder="특징 입력" style="flex: 1; padding: 6px 8px; font-size: 11px; border: 1px solid #ddd; border-radius: 4px; min-height: 28px;">
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
+                    </div>
+
+                    <!-- 기타 이미지 1, 2 -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <h4>기타 이미지1</h4>
+                            <div class="image-box" style="min-height: 220px; max-height: 280px;" id="other1-image-${char.id}">
+                                ${char.images.other1 ? `<img src="${char.images.other1}" style="object-fit: cover; object-position: ${char.other1Position ? char.other1Position.x + '% ' + char.other1Position.y + '%' : '50% 50%'}">` : '+'}
+                            </div>
+                            <button style="width: 100%; font-size: 10px; margin-top: 4px;" data-select-image data-char-id="${char.id}" data-image-type="other1">선택</button>
+                            <button style="width: 100%; font-size: 9px; margin-top: 2px; background: #f0f0f0;" onclick="startImageAdjustOther('${char.id}', 'other1')">조정</button>
+                        </div>
+
+                        <div>
+                            <h4>기타 이미지2</h4>
+                            <div class="image-box" style="min-height: 220px; max-height: 280px;" id="other2-image-${char.id}">
+                                ${char.images.other2 ? `<img src="${char.images.other2}" style="object-fit: cover; object-position: ${char.other2Position ? char.other2Position.x + '% ' + char.other2Position.y + '%' : '50% 50%'}">` : '+'}
+                            </div>
+                            <button style="width: 100%; font-size: 10px; margin-top: 4px;" data-select-image data-char-id="${char.id}" data-image-type="other2">선택</button>
+                            <button style="width: 100%; font-size: 9px; margin-top: 2px; background: #f0f0f0;" onclick="startImageAdjustOther('${char.id}', 'other2')">조정</button>
+                        </div>
+                    </div>
+
+                    <!-- 추가정보 -->
+                    <div>
+                        <h4>추가정보</h4>
+                        ${char.additionalInfo.map((val, i) => `
+                            <div style="margin-bottom: 0.75rem;">
+                                <label style="font-size: 10px; color: #666; font-weight: 600;">추가정보 ${i + 1}</label>
+                                <textarea onchange="updateAdditionalInfo('${char.id}', ${i}, this.value)" placeholder="추가 정보를 입력하세요" style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; font-family: inherit;">${val}</textarea>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
             `).join('');
