@@ -139,11 +139,6 @@
             resize: vertical;
             min-height: 100px;
         }
-
-        .characteristic-item input {
-            min-height: 50px;
-            padding: 8px 12px;
-        }
         
         input[type="text"]:focus,
         textarea:focus {
@@ -151,12 +146,77 @@
             border-color: #999;
             background: #fafafa;
         }
+
+        .keyword-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .keyword-and-colors {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .keyword-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .colors-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .colors-horizontal {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .color-item-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .color-box-compact {
+            width: 100%;
+            height: 40px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .color-code-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: monospace;
+            text-align: center;
+        }
+
+        .color-name-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 10px;
+        }
         
         .content-grid {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
             margin-bottom: 1.5rem;
+        }
+
+        .main-image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
         
         .image-box {
@@ -168,7 +228,6 @@
             justify-content: center;
             background: #f9f9f9;
             cursor: pointer;
-            margin-bottom: 0.75rem;
             overflow: hidden;
             font-size: 48px;
             color: #ccc;
@@ -179,15 +238,15 @@
             height: 100%;
             object-fit: cover;
         }
-        
+
         .image-box-small {
             aspect-ratio: 1;
             font-size: 24px;
         }
-        
+
         .image-box-half {
             aspect-ratio: 2/1;
-            font-size: 32px;
+            font-size: 24px;
         }
         
         .grid-2 {
@@ -195,55 +254,18 @@
             grid-template-columns: 1fr 1fr;
             gap: 0.75rem;
         }
+
+        .other-images-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
         
         .grid-full {
             display: grid;
             grid-template-columns: 1fr;
             gap: 0.75rem;
-        }
-        
-        .color-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-        
-        .color-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .color-box {
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        
-        .color-info {
-            flex: 1;
-        }
-        
-        .color-info label {
-            margin-bottom: 2px;
-        }
-        
-        .color-info input {
-            width: 100%;
-            padding: 4px 8px;
-            font-family: monospace;
-            font-size: 11px;
-        }
-        
-        .color-name-input {
-            width: 100%;
-            padding: 4px 8px;
-            font-size: 11px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
         }
         
         .download-section {
@@ -265,20 +287,7 @@
         .download-section button:hover {
             background: #23803a;
         }
-        
-        .section-divider {
-            border-top: 1px solid #f0f0f0;
-            padding-top: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .colors-title {
-            font-size: 12px;
-            font-weight: 500;
-            color: #666;
-            margin-bottom: 0.75rem;
-        }
-        
+
         h4 {
             font-size: 11px;
             font-weight: 600;
@@ -306,6 +315,14 @@
         .characteristic-item input {
             flex: 1;
             margin-bottom: 0;
+            min-height: 50px;
+            padding: 8px 12px;
+        }
+
+        .section-divider {
+            border-top: 1px solid #f0f0f0;
+            padding-top: 1rem;
+            margin-top: 1rem;
         }
     </style>
 </head>
@@ -371,18 +388,53 @@
                         <button class="close-btn" onclick="removeCharacter('${char.id}')">×</button>
                     </div>
                     
-                    <div class="form-group">
-                        <label>캐릭터 키워드</label>
-                        <input type="text" value="${char.keyword}" onchange="updateCharKeyword('${char.id}', this.value)" placeholder="캐릭터를 나타낼 키워드를 입력하세요">
+                    <div class="keyword-and-colors">
+                        <div class="keyword-box">
+                            <label>캐릭터 키워드</label>
+                            <input type="text" value="${char.keyword}" onchange="updateCharKeyword('${char.id}', this.value)" placeholder="캐릭터를 나타낼 키워드를 입력하세요">
+                        </div>
+
+                        <div class="colors-box">
+                            <label style="margin-bottom: 0.5rem;">색상 (클릭해서 스포이드)</label>
+                            <div class="colors-horizontal">
+                                ${['hair', 'eyeL', 'eyeR', 'skin', 'etc1', 'etc2'].map(key => {
+                                    const color = char.colors[key];
+                                    const isEtc = key === 'etc1' || key === 'etc2';
+                                    return `
+                                        <div class="color-item-compact">
+                                            <div class="color-box-compact" onclick="selectColorField('${char.id}', '${key}')" style="background: ${color.code};"></div>
+                                            ${isEtc ? `<input type="text" class="color-name-input" value="${color.name}" onchange="updateColorName('${char.id}', '${key}', this.value)" placeholder="${key === 'etc1' ? '기타1' : '기타2'}">` : `<label style="text-align: center; margin-bottom: 0;">${color.name}</label>`}
+                                            <input type="text" class="color-code-input" value="${color.code}" readonly>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
                     </div>
-                    
+
                     <div class="content-grid">
-                        <div>
+                        <div class="main-image-section">
                             <h4>메인 이미지</h4>
                             <div class="image-box" onclick="selectImage('${char.id}', 'main')">
                                 ${char.images.main ? `<img src="${char.images.main}">` : '+'}
                             </div>
-                            <button style="width: 100%;" onclick="selectImage('${char.id}', 'main')">이미지 선택</button>
+                            <button style="width: 100%; font-size: 11px;" onclick="selectImage('${char.id}', 'main')">이미지 선택</button>
+                            
+                            <h4 style="margin-top: 0.75rem;">기타 이미지</h4>
+                            <div class="other-images-section">
+                                <div>
+                                    <div class="image-box image-box-half" onclick="selectImage('${char.id}', 'other1')">
+                                        ${char.images.other1 ? `<img src="${char.images.other1}">` : '+'}
+                                    </div>
+                                    <button style="width: 100%; font-size: 10px; margin-top: 4px;" onclick="selectImage('${char.id}', 'other1')">선택</button>
+                                </div>
+                                <div>
+                                    <div class="image-box image-box-half" onclick="selectImage('${char.id}', 'other2')">
+                                        ${char.images.other2 ? `<img src="${char.images.other2}">` : '+'}
+                                    </div>
+                                    <button style="width: 100%; font-size: 10px; margin-top: 4px;" onclick="selectImage('${char.id}', 'other2')">선택</button>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="grid-2">
@@ -430,58 +482,6 @@
                                         <textarea onchange="updateAdditionalInfo('${char.id}', ${i}, this.value)" placeholder="추가 정보를 입력하세요">${val}</textarea>
                                     </div>
                                 `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <h4>기타 이미지</h4>
-                        <div class="grid-2">
-                            <div>
-                                <div class="image-box image-box-half" onclick="selectImage('${char.id}', 'other1')">
-                                    ${char.images.other1 ? `<img src="${char.images.other1}">` : '+'}
-                                </div>
-                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'other1')">선택</button>
-                            </div>
-                            <div>
-                                <div class="image-box image-box-half" onclick="selectImage('${char.id}', 'other2')">
-                                    ${char.images.other2 ? `<img src="${char.images.other2}">` : '+'}
-                                </div>
-                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'other2')">선택</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="section-divider">
-                        <div class="colors-title">색상 (색상 칸을 클릭해서 스포이드 사용)</div>
-                        <div class="color-grid">
-                            ${['hair', 'eyeL', 'eyeR', 'skin'].map(key => {
-                                const color = char.colors[key];
-                                return `
-                                    <div class="color-item">
-                                        <div class="color-box" onclick="selectColorField('${char.id}', '${key}')" style="background: ${color.code};"></div>
-                                        <div class="color-info">
-                                            <label>${color.name}</label>
-                                            <input type="text" value="${color.code}" readonly>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                        <div style="margin-top: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                            <div class="color-item">
-                                <div class="color-box" onclick="selectColorField('${char.id}', 'etc1')" style="background: ${char.colors.etc1.code};"></div>
-                                <div class="color-info">
-                                    <input type="text" value="${char.colors.etc1.name}" onchange="updateColorName('${char.id}', 'etc1', this.value)" placeholder="기타1" style="margin-bottom: 4px;">
-                                    <input type="text" value="${char.colors.etc1.code}" readonly>
-                                </div>
-                            </div>
-                            <div class="color-item">
-                                <div class="color-box" onclick="selectColorField('${char.id}', 'etc2')" style="background: ${char.colors.etc2.code};"></div>
-                                <div class="color-info">
-                                    <input type="text" value="${char.colors.etc2.name}" onchange="updateColorName('${char.id}', 'etc2', this.value)" placeholder="기타2" style="margin-bottom: 4px;">
-                                    <input type="text" value="${char.colors.etc2.code}" readonly>
-                                </div>
                             </div>
                         </div>
                     </div>
