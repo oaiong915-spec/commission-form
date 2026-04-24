@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캐릭터 커미션 신청서</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -190,12 +191,6 @@
             gap: 0.75rem;
         }
         
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-        
         .color-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -243,6 +238,13 @@
             padding: 12px;
             font-size: 14px;
             font-weight: 500;
+            background: #2ea043;
+            color: white;
+            border: none;
+        }
+        
+        .download-section button:hover {
+            background: #23803a;
         }
         
         .section-divider {
@@ -283,8 +285,7 @@
         </div>
         
         <div class="download-section">
-            <button id="downloadBtn">📥 다운로드 (TXT)</button>
-            <button id="downloadJsonBtn">📥 다운로드 (JSON)</button>
+            <button id="downloadImageBtn">📥 이미지로 다운로드</button>
         </div>
     </div>
 
@@ -293,8 +294,7 @@
         
         const addCharBtn = document.getElementById('addCharBtn');
         const charactersContainer = document.getElementById('charactersContainer');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+        const downloadImageBtn = document.getElementById('downloadImageBtn');
         
         function addCharacter() {
             const charId = 'char_' + Date.now();
@@ -324,7 +324,7 @@
         
         function renderCharacters() {
             charactersContainer.innerHTML = characters.map((char, idx) => `
-                <div class="character-card">
+                <div class="character-card" id="char-${char.id}">
                     <div class="character-header">
                         <h3>캐릭터 ${idx + 1}</h3>
                         <button class="close-btn" onclick="removeCharacter('${char.id}')">×</button>
@@ -529,70 +529,43 @@
             img.src = colorPickerImage;
         }
         
-        downloadBtn.addEventListener('click', () => {
+        downloadImageBtn.addEventListener('click', async () => {
             if (characters.length === 0) {
                 alert('최소 1개 이상의 캐릭터를 추가하세요');
                 return;
             }
             
-            let text = '=== 캐릭터 커미션 신청서 ===\n\n';
+            downloadImageBtn.disabled = true;
+            downloadImageBtn.textContent = '생성 중...';
             
-            characters.forEach((char, idx) => {
-                text += `【캐릭터 ${idx + 1}】\n`;
-                text += `이름: ${char.name || '(입력 필요)'}\n\n`;
-                
-                text += `【특징】\n`;
-                char.characteristics.forEach((c, i) => {
-                    text += `${i + 1}. ${c || '(입력 필요)'}\n`;
-                });
-                text += '\n';
-                
-                text += `【색상】\n`;
-                Object.entries(char.colors).forEach(([key, color]) => {
-                    text += `${color.name}: ${color.code}\n`;
-                });
-                text += '\n';
-                
-                char.additionalInfo.forEach((info, i) => {
-                    if (info) {
-                        text += `【추가정보 ${i + 1}】\n`;
-                        text += `${info}\n\n`;
-                    }
-                });
-                
-                text += '---\n\n';
-            });
-            
-            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = '커미션신청서.txt';
-            link.click();
-            URL.revokeObjectURL(url);
-        });
-        
-        downloadJsonBtn.addEventListener('click', () => {
-            if (characters.length === 0) {
-                alert('최소 1개 이상의 캐릭터를 추가하세요');
-                return;
+            try {
+                for (let idx = 0; idx < characters.length; idx++) {
+                    const char = characters[idx];
+                    const element = document.getElementById(`char-${char.id}`);
+                    
+                    const canvas = await html2canvas(element, {
+                        backgroundColor: '#ffffff',
+                        scale: 2,
+                        useCORS: true,
+                        allowTaint: true
+                    });
+                    
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/png');
+                    link.download = (char.name || '캐릭터_' + (idx + 1)) + '.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            } catch (e) {
+                console.error('다운로드 오류:', e);
+                alert('다운로드 중 오류가 발생했습니다.');
+            } finally {
+                downloadImageBtn.disabled = false;
+                downloadImageBtn.textContent = '📥 이미지로 다운로드';
             }
-            
-            const dataToSave = characters.map(char => ({
-                name: char.name,
-                characteristics: char.characteristics,
-                additionalInfo: char.additionalInfo,
-                colors: char.colors
-            }));
-            
-            const json = JSON.stringify(dataToSave, null, 2);
-            const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = '커미션신청서.json';
-            link.click();
-            URL.revokeObjectURL(url);
         });
         
         addCharBtn.addEventListener('click', addCharacter);
