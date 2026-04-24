@@ -562,10 +562,18 @@
                                 ${['hair', 'eyeL', 'eyeR', 'skin', 'etc1', 'etc2'].map(key => {
                                     const color = char.colors[key];
                                     const isEtc = key === 'etc1' || key === 'etc2';
+                                    const shortNames = {
+                                        'hair': '머리',
+                                        'eyeL': '눈(좌)',
+                                        'eyeR': '눈(우)',
+                                        'skin': '피부',
+                                        'etc1': '기타1',
+                                        'etc2': '기타2'
+                                    };
                                     return `
                                         <div class="color-item-compact">
                                             <div class="color-box-compact" onclick="selectColorField('${char.id}', '${key}')" style="background: ${color.code};"></div>
-                                            ${isEtc ? `<input type="text" class="color-name-input" value="${color.name}" onchange="updateColorName('${char.id}', '${key}', this.value)" placeholder="${key === 'etc1' ? '기타1' : '기타2'}">` : `<label style="text-align: center; margin-bottom: 0;">${color.name}</label>`}
+                                            <div style="font-size: 9px; color: #666; text-align: center; font-weight: 600;">${shortNames[key]}</div>
                                             <input type="text" class="color-code-input" value="${color.code}" readonly>
                                         </div>
                                     `;
@@ -731,11 +739,18 @@
                             <div class="colors-horizontal">
                                 ${['hair', 'eyeL', 'eyeR', 'skin', 'etc1', 'etc2'].map(key => {
                                     const color = charData.colors[key];
-                                    const isEtc = key === 'etc1' || key === 'etc2';
+                                    const shortNames = {
+                                        'hair': '머리',
+                                        'eyeL': '눈(좌)',
+                                        'eyeR': '눈(우)',
+                                        'skin': '피부',
+                                        'etc1': '기타1',
+                                        'etc2': '기타2'
+                                    };
                                     return `
                                         <div class="color-item-compact">
                                             <div class="color-box-compact" onclick="selectCoupleColorField('${pairId}', ${charNum}, '${key}')" style="background: ${color.code};"></div>
-                                            ${isEtc ? `<input type="text" class="color-name-input" value="${color.name}" onchange="updateCoupleColorName('${pairId}', ${charNum}, '${key}', this.value)">` : `<label style="text-align: center; margin-bottom: 0;">${color.name}</label>`}
+                                            <div style="font-size: 9px; color: #666; text-align: center; font-weight: 600;">${shortNames[key]}</div>
                                             <input type="text" class="color-code-input" value="${color.code}" readonly>
                                         </div>
                                     `;
