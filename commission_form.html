@@ -766,10 +766,11 @@
                     <div class="content-grid">
                         <div class="main-image-section">
                             <h4>메인</h4>
-                            <div class="image-box" onclick="selectCoupleImage('${pairId}', ${charNum}, 'main')">
+                            <div class="image-box" id="couple-main-image-${pairId}-${charNum}">
                                 ${charData.images.main ? `<img src="${charData.images.main}">` : '+'}
                             </div>
                             <button style="width: 100%; font-size: 10px;" onclick="selectCoupleImage('${pairId}', ${charNum}, 'main')">선택</button>
+                            <button style="width: 100%; font-size: 9px; margin-top: 4px; background: #f0f0f0;" id="adjust-couple-${pairId}-${charNum}" style="display: none;" onclick="startCoupleImageAdjust('${pairId}', ${charNum})">조정</button>
                             
                             <h4 style="margin-top: 0.75rem;">기타</h4>
                             <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
@@ -956,11 +957,6 @@
             const char = characters.find(c => c.id === charId);
             if (!char || !char.images.main) return;
 
-            const imageBox = document.getElementById(`main-image-${charId}`);
-            const img = imageBox.querySelector('img');
-            if (!img) return;
-
-            const rect = imageBox.getBoundingClientRect();
             const overlay = document.createElement('div');
             overlay.style.cssText = `
                 position: fixed;
@@ -968,30 +964,43 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0,0,0,0.8);
+                background: rgba(0,0,0,0.9);
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 z-index: 1000;
             `;
 
+            const topBar = document.createElement('div');
+            topBar.style.cssText = `
+                width: 100%;
+                padding: 15px;
+                background: #222;
+                color: white;
+                text-align: center;
+                font-size: 14px;
+                border-bottom: 1px solid #444;
+            `;
+            topBar.textContent = '마우스로 드래그해서 위치 조정 | 휠로 줌인/줌아웃 | 완료 버튼을 누르세요';
+
             const container = document.createElement('div');
             container.style.cssText = `
                 position: relative;
-                width: 80%;
-                max-width: 600px;
-                border: 3px solid white;
+                width: 500px;
+                height: 500px;
+                border: 3px solid red;
                 overflow: hidden;
-                background: white;
+                background: #000;
+                cursor: grab;
             `;
 
             const adjustImg = document.createElement('img');
             adjustImg.src = char.images.main;
             adjustImg.style.cssText = `
-                width: 100%;
-                height: auto;
-                display: block;
-                cursor: move;
+                position: absolute;
+                cursor: grab;
+                user-select: none;
             `;
 
             const crosshair = document.createElement('div');
@@ -999,10 +1008,11 @@
                 position: absolute;
                 width: 2px;
                 height: 100%;
-                background: rgba(255,0,0,0.5);
+                background: rgba(255,0,0,0.7);
                 left: 50%;
                 top: 0;
                 pointer-events: none;
+                z-index: 10;
             `;
 
             const crosshairH = document.createElement('div');
@@ -1010,59 +1020,327 @@
                 position: absolute;
                 height: 2px;
                 width: 100%;
-                background: rgba(255,0,0,0.5);
+                background: rgba(255,0,0,0.7);
                 top: 50%;
                 left: 0;
                 pointer-events: none;
+                z-index: 10;
             `;
 
             container.appendChild(adjustImg);
             container.appendChild(crosshair);
             container.appendChild(crosshairH);
-            overlay.appendChild(container);
-            document.body.appendChild(overlay);
 
-            let offsetX = 0, offsetY = 0;
+            let scale = 1;
+            let offsetX = 0;
+            let offsetY = 0;
+            let isDragging = false;
+            let startX, startY;
 
-            adjustImg.addEventListener('mousemove', (e) => {
-                const rect = container.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-                crosshair.style.left = x + '%';
-                crosshairH.style.top = y + '%';
+            const updateImage = () => {
+                adjustImg.style.width = (adjustImg.naturalWidth * scale) + 'px';
+                adjustImg.style.height = (adjustImg.naturalHeight * scale) + 'px';
+                adjustImg.style.left = offsetX + 'px';
+                adjustImg.style.top = offsetY + 'px';
+            };
+
+            adjustImg.onload = () => {
+                const imgWidth = adjustImg.naturalWidth;
+                const imgHeight = adjustImg.naturalHeight;
+                const ratio = Math.max(500 / imgWidth, 500 / imgHeight);
+                scale = ratio * 1.2;
+                offsetX = (500 - imgWidth * scale) / 2;
+                offsetY = (500 - imgHeight * scale) / 2;
+                updateImage();
+            };
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX - offsetX;
+                startY = e.clientY - offsetY;
+                container.style.cursor = 'grabbing';
             });
 
-            adjustImg.addEventListener('click', (e) => {
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    offsetX = e.clientX - startX;
+                    offsetY = e.clientY - startY;
+                    updateImage();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const scaleChange = e.deltaY > 0 ? 0.9 : 1.1;
+                const oldScale = scale;
+                scale *= scaleChange;
+                scale = Math.max(1, Math.min(scale, 5));
+
                 const rect = container.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width;
-                const y = (e.clientY - rect.top) / rect.height;
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                offsetX = mouseX - (mouseX - offsetX) * (scale / oldScale);
+                offsetY = mouseY - (mouseY - offsetY) * (scale / oldScale);
+
+                updateImage();
+            });
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = `
+                margin-top: 20px;
+                display: flex;
+                gap: 10px;
+            `;
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = '✓ 완료';
+            confirmBtn.style.cssText = `
+                padding: 12px 30px;
+                background: #2ea043;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+            `;
+            confirmBtn.onclick = () => {
+                const centerX = (250 - offsetX) / (adjustImg.naturalWidth * scale / 2) / 2.5;
+                const centerY = (250 - offsetY) / (adjustImg.naturalHeight * scale / 2) / 2.5;
                 
-                // 선택한 영역을 기반으로 이미지 위치 조정
-                const imgRect = adjustImg.getBoundingClientRect();
-                const cropX = x * imgRect.width - rect.width / 2;
-                const cropY = y * imgRect.height - rect.height / 2;
-                
-                img.style.objectPosition = `${x * 100}% ${y * 100}%`;
-                char.imagePosition = { x: x * 100, y: y * 100 };
+                const imageBox = document.getElementById(`main-image-${charId}`);
+                const img = imageBox.querySelector('img');
+                if (img) {
+                    img.style.objectPosition = `${Math.max(0, Math.min(100, 50 + centerX * 50))}% ${Math.max(0, Math.min(100, 50 + centerY * 50))}%`;
+                }
                 
                 document.body.removeChild(overlay);
+            };
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = '✕ 취소';
+            cancelBtn.style.cssText = `
+                padding: 12px 30px;
+                background: #666;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+            `;
+            cancelBtn.onclick = () => {
+                document.body.removeChild(overlay);
+            };
+
+            buttonContainer.appendChild(confirmBtn);
+            buttonContainer.appendChild(cancelBtn);
+
+            overlay.appendChild(topBar);
+            overlay.appendChild(container);
+            overlay.appendChild(buttonContainer);
+            document.body.appendChild(overlay);
+        }
+
+        function startCoupleImageAdjust(pairId, charNum) {
+            const pair = couplePairs.find(p => p.id === pairId);
+            if (!pair) return;
+            const char = charNum === 1 ? pair.char1 : pair.char2;
+            if (!char || !char.images.main) return;
+
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            `;
+
+            const topBar = document.createElement('div');
+            topBar.style.cssText = `
+                width: 100%;
+                padding: 15px;
+                background: #222;
+                color: white;
+                text-align: center;
+                font-size: 14px;
+                border-bottom: 1px solid #444;
+            `;
+            topBar.textContent = '마우스로 드래그해서 위치 조정 | 휠로 줌인/줌아웃 | 완료 버튼을 누르세요';
+
+            const container = document.createElement('div');
+            container.style.cssText = `
+                position: relative;
+                width: 500px;
+                height: 500px;
+                border: 3px solid red;
+                overflow: hidden;
+                background: #000;
+                cursor: grab;
+            `;
+
+            const adjustImg = document.createElement('img');
+            adjustImg.src = char.images.main;
+            adjustImg.style.cssText = `
+                position: absolute;
+                cursor: grab;
+                user-select: none;
+            `;
+
+            const crosshair = document.createElement('div');
+            crosshair.style.cssText = `
+                position: absolute;
+                width: 2px;
+                height: 100%;
+                background: rgba(255,0,0,0.7);
+                left: 50%;
+                top: 0;
+                pointer-events: none;
+                z-index: 10;
+            `;
+
+            const crosshairH = document.createElement('div');
+            crosshairH.style.cssText = `
+                position: absolute;
+                height: 2px;
+                width: 100%;
+                background: rgba(255,0,0,0.7);
+                top: 50%;
+                left: 0;
+                pointer-events: none;
+                z-index: 10;
+            `;
+
+            container.appendChild(adjustImg);
+            container.appendChild(crosshair);
+            container.appendChild(crosshairH);
+
+            let scale = 1;
+            let offsetX = 0;
+            let offsetY = 0;
+            let isDragging = false;
+            let startX, startY;
+
+            const updateImage = () => {
+                adjustImg.style.width = (adjustImg.naturalWidth * scale) + 'px';
+                adjustImg.style.height = (adjustImg.naturalHeight * scale) + 'px';
+                adjustImg.style.left = offsetX + 'px';
+                adjustImg.style.top = offsetY + 'px';
+            };
+
+            adjustImg.onload = () => {
+                const imgWidth = adjustImg.naturalWidth;
+                const imgHeight = adjustImg.naturalHeight;
+                const ratio = Math.max(500 / imgWidth, 500 / imgHeight);
+                scale = ratio * 1.2;
+                offsetX = (500 - imgWidth * scale) / 2;
+                offsetY = (500 - imgHeight * scale) / 2;
+                updateImage();
+            };
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX - offsetX;
+                startY = e.clientY - offsetY;
+                container.style.cursor = 'grabbing';
             });
 
-            const closeBtn = document.createElement('button');
-            closeBtn.textContent = '닫기';
-            closeBtn.style.cssText = `
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                padding: 8px 16px;
-                background: white;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                cursor: pointer;
-                z-index: 1001;
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    offsetX = e.clientX - startX;
+                    offsetY = e.clientY - startY;
+                    updateImage();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const scaleChange = e.deltaY > 0 ? 0.9 : 1.1;
+                const oldScale = scale;
+                scale *= scaleChange;
+                scale = Math.max(1, Math.min(scale, 5));
+
+                const rect = container.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                offsetX = mouseX - (mouseX - offsetX) * (scale / oldScale);
+                offsetY = mouseY - (mouseY - offsetY) * (scale / oldScale);
+
+                updateImage();
+            });
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = `
+                margin-top: 20px;
+                display: flex;
+                gap: 10px;
             `;
-            closeBtn.onclick = () => document.body.removeChild(overlay);
-            overlay.appendChild(closeBtn);
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = '✓ 완료';
+            confirmBtn.style.cssText = `
+                padding: 12px 30px;
+                background: #2ea043;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+            `;
+            confirmBtn.onclick = () => {
+                const centerX = (250 - offsetX) / (adjustImg.naturalWidth * scale / 2) / 2.5;
+                const centerY = (250 - offsetY) / (adjustImg.naturalHeight * scale / 2) / 2.5;
+                
+                char.imagePosition = {
+                    x: Math.max(0, Math.min(100, 50 + centerX * 50)),
+                    y: Math.max(0, Math.min(100, 50 + centerY * 50))
+                };
+                
+                renderCouplePairs();
+                document.body.removeChild(overlay);
+            };
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = '✕ 취소';
+            cancelBtn.style.cssText = `
+                padding: 12px 30px;
+                background: #666;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+            `;
+            cancelBtn.onclick = () => {
+                document.body.removeChild(overlay);
+            };
+
+            buttonContainer.appendChild(confirmBtn);
+            buttonContainer.appendChild(cancelBtn);
+
+            overlay.appendChild(topBar);
+            overlay.appendChild(container);
+            overlay.appendChild(buttonContainer);
+            document.body.appendChild(overlay);
         }
 
         function selectCoupleImage(pairId, charNum, imageType) {
@@ -1079,6 +1357,13 @@
                             const char = charNum === 1 ? pair.char1 : pair.char2;
                             char.images[imageType] = event.target.result;
                             renderCouplePairs();
+                            // 메인 이미지 선택 후 조정 버튼 표시
+                            if (imageType === 'main') {
+                                setTimeout(() => {
+                                    const btn = document.getElementById(`adjust-couple-${pairId}-${charNum}`);
+                                    if (btn) btn.style.display = 'block';
+                                }, 100);
+                            }
                         }
                     };
                     reader.readAsDataURL(file);
