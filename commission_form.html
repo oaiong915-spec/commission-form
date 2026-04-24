@@ -137,7 +137,7 @@
         
         textarea {
             resize: vertical;
-            min-height: 60px;
+            min-height: 100px;
         }
         
         input[type="text"]:focus,
@@ -180,14 +180,20 @@
             font-size: 24px;
         }
         
-        .image-box-wide {
-            aspect-ratio: 16/9;
-            font-size: 48px;
+        .image-box-half {
+            aspect-ratio: 2/1;
+            font-size: 32px;
         }
         
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        
+        .grid-full {
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 0.75rem;
         }
         
@@ -225,6 +231,14 @@
             padding: 4px 8px;
             font-family: monospace;
             font-size: 11px;
+        }
+        
+        .color-name-input {
+            width: 100%;
+            padding: 4px 8px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         
         .download-section {
@@ -266,6 +280,28 @@
             color: #666;
             margin-bottom: 0.5rem;
         }
+
+        .characteristics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .characteristic-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .characteristic-item label {
+            margin-bottom: 0;
+            min-width: 60px;
+        }
+
+        .characteristic-item input {
+            flex: 1;
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
@@ -299,14 +335,15 @@
             const charId = 'char_' + Date.now();
             characters.push({
                 id: charId,
-                name: '',
+                keyword: '',
                 characteristics: ['', '', '', '', ''],
                 images: {
                     animal: null,
                     main: null,
                     small1: null,
                     small2: null,
-                    other: null
+                    other1: null,
+                    other2: null
                 },
                 additionalInfo: ['', ''],
                 colors: {
@@ -330,8 +367,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>캐릭터 이름</label>
-                        <input type="text" value="${char.name}" onchange="updateCharName('${char.id}', this.value)" placeholder="캐릭터 이름을 입력하세요">
+                        <label>캐릭터 키워드</label>
+                        <input type="text" value="${char.keyword}" onchange="updateCharKeyword('${char.id}', this.value)" placeholder="캐릭터를 나타낼 키워드를 입력하세요">
                     </div>
                     
                     <div class="content-grid">
@@ -353,7 +390,7 @@
                             </div>
                             
                             <div>
-                                <h4>작은거1</h4>
+                                <h4>기타1</h4>
                                 <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'small1')">
                                     ${char.images.small1 ? `<img src="${char.images.small1}">` : '+'}
                                 </div>
@@ -361,35 +398,53 @@
                             </div>
                             
                             <div>
-                                <h4>작은거2</h4>
+                                <h4>기타2</h4>
                                 <div class="image-box image-box-small" onclick="selectImage('${char.id}', 'small2')">
                                     ${char.images.small2 ? `<img src="${char.images.small2}">` : '+'}
                                 </div>
                                 <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'small2')">선택</button>
                             </div>
                             
-                            ${char.characteristics.map((val, i) => `
-                                <div ${i === 0 ? 'style="grid-column: 1/3;"' : ''}>
-                                    <label>특징 ${i + 1}</label>
-                                    <input type="text" value="${val}" onchange="updateCharacteristic('${char.id}', ${i}, this.value)" placeholder="예: 쾌활함">
+                            <div style="grid-column: 1/3;">
+                                <h4>특징</h4>
+                                <div class="characteristics-grid">
+                                    ${char.characteristics.map((val, i) => `
+                                        <div class="characteristic-item">
+                                            <label>특징 ${i + 1}</label>
+                                            <input type="text" value="${val}" onchange="updateCharacteristic('${char.id}', ${i}, this.value)" placeholder="예: 쾌활함">
+                                        </div>
+                                    `).join('')}
                                 </div>
-                            `).join('')}
+                            </div>
                             
-                            ${char.additionalInfo.map((val, i) => `
-                                <div style="grid-column: 1/3;">
-                                    <label>추가정보 ${i + 1}</label>
-                                    <textarea onchange="updateAdditionalInfo('${char.id}', ${i}, this.value)" placeholder="추가 정보를 입력하세요">${val}</textarea>
-                                </div>
-                            `).join('')}
+                            <div style="grid-column: 1/3;">
+                                <h4>추가정보</h4>
+                                ${char.additionalInfo.map((val, i) => `
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <label>추가정보 ${i + 1}</label>
+                                        <textarea onchange="updateAdditionalInfo('${char.id}', ${i}, this.value)" placeholder="추가 정보를 입력하세요">${val}</textarea>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <h4>기타 이미지</h4>
-                        <div class="image-box image-box-wide" onclick="selectImage('${char.id}', 'other')">
-                            ${char.images.other ? `<img src="${char.images.other}">` : '+'}
+                        <div class="grid-2">
+                            <div>
+                                <div class="image-box image-box-half" onclick="selectImage('${char.id}', 'other1')">
+                                    ${char.images.other1 ? `<img src="${char.images.other1}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'other1')">선택</button>
+                            </div>
+                            <div>
+                                <div class="image-box image-box-half" onclick="selectImage('${char.id}', 'other2')">
+                                    ${char.images.other2 ? `<img src="${char.images.other2}">` : '+'}
+                                </div>
+                                <button style="width: 100%; font-size: 10px;" onclick="selectImage('${char.id}', 'other2')">선택</button>
+                            </div>
                         </div>
-                        <button style="width: 100%;" onclick="selectImage('${char.id}', 'other')">이미지 선택</button>
                     </div>
                     
                     <div class="section-divider">
@@ -405,14 +460,24 @@
                                 </div>
                             `).join('')}
                         </div>
+                        ${`<div style="margin-top: 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div>
+                                <label>기타1 이름</label>
+                                <input type="text" class="color-name-input" value="${char.colors.etc1.name}" onchange="updateColorName('${char.id}', 'etc1', this.value)">
+                            </div>
+                            <div>
+                                <label>기타2 이름</label>
+                                <input type="text" class="color-name-input" value="${char.colors.etc2.name}" onchange="updateColorName('${char.id}', 'etc2', this.value)">
+                            </div>
+                        </div>`}
                     </div>
                 </div>
             `).join('');
         }
         
-        function updateCharName(charId, value) {
+        function updateCharKeyword(charId, value) {
             const char = characters.find(c => c.id === charId);
-            if (char) char.name = value;
+            if (char) char.keyword = value;
         }
         
         function updateCharacteristic(charId, idx, value) {
@@ -423,6 +488,13 @@
         function updateAdditionalInfo(charId, idx, value) {
             const char = characters.find(c => c.id === charId);
             if (char) char.additionalInfo[idx] = value;
+        }
+        
+        function updateColorName(charId, colorKey, value) {
+            const char = characters.find(c => c.id === charId);
+            if (char && char.colors[colorKey]) {
+                char.colors[colorKey].name = value;
+            }
         }
         
         function removeCharacter(charId) {
@@ -470,8 +542,12 @@
                     colorPickerImage = char.images.small2;
                     break;
                 }
-                if (char.images.other) {
-                    colorPickerImage = char.images.other;
+                if (char.images.other1) {
+                    colorPickerImage = char.images.other1;
+                    break;
+                }
+                if (char.images.other2) {
+                    colorPickerImage = char.images.other2;
                     break;
                 }
             }
@@ -546,12 +622,13 @@
                         backgroundColor: '#ffffff',
                         scale: 2,
                         useCORS: true,
-                        allowTaint: true
+                        allowTaint: true,
+                        logging: false
                     });
                     
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL('image/png');
-                    link.download = (char.name || '캐릭터_' + (idx + 1)) + '.png';
+                    link.download = (char.keyword || '캐릭터_' + (idx + 1)) + '.png';
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
